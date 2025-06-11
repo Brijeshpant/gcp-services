@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+
+}
+
+group = 'com.brij'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+configurations {
+    invoker
+}
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']  // Make sure this points to the correct directory
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.google.cloud.functions:functions-framework-api:1.1.4'
+
+     //Pubsub
+    implementation 'com.google.cloud:google-cloudevent-types:0.1.5'
+    implementation 'io.cloudevents:cloudevents-api:4.0.1'
+
+    //cloud storage
+    implementation 'com.google.cloud:google-cloud-storage:2.45.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
+
+
+    // Testing dependencies
+    invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.3.1'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'  // API for writing tests
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'  // Engine for running tests
+    testImplementation 'com.google.truth:truth:1.4.0'
+    testImplementation 'com.google.guava:guava-testlib:30.1-jre'  // Update version as needed
+    testImplementation 'io.cloudevents:cloudevents-core:2.5.0'  // Update version as needed
+}
+
+tasks.register("runFunction", JavaExec) {
+    main = 'com.google.cloud.functions.invoker.runner.Invoker'
+    classpath(configurations.invoker)
+    inputs.files(configurations.runtimeClasspath, sourceSets.main.output)
+    args(
+            '--target', project.findProperty('run.functionTarget'),
+            '--port', project.findProperty('run.port') ?: 8080
+    )
+    doFirst {
+        args('--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath)
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    zip64 true
+}
+test {
+    useJUnitPlatform()
+}
