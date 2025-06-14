@@ -10,7 +10,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/gcp-plain-cloudfunction" />
-            <option value="$PROJECT_DIR$/user-profile-cr-service" />
           </set>
         </option>
       </GradleProjectSettings>
