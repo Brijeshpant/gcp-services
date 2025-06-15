@@ -1,3 +1,5 @@
 rootProject.name = 'gcp-services-poc'
 include 'gcp-plain-cloudfunction'
 
+
+include 'user-profile-cr-service'
