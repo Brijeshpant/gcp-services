@@ -1,12 +1,6 @@
 
-
 ### Run locally
-``./gradlew runFunction -Prun.functionTarget=com.brij.CloudFunctionDemo\
-``
-
-``
-
-
+``./gradlew runFunction -Prun.functionTarget=com.brij.CloudFunctionDemo
 ``
 gcloud config set project projectId
 ``
@@ -25,7 +19,12 @@ gcloud run deploy gcp-plain-cloudfunction \
 
 ```
 ### Deploy to cloud
-
+gcloud run deploy cloudrun-function-pubsub-event-demo \
+--source gcp-plain-cloudfunction/build/libs \
+--function com.brij.PubSubFunction \
+--base-image java21 \
+--region asia-south2 \
+--allow-unauthenticated
 ### test locally
 Pubsub based api call
 ```
@@ -112,29 +111,11 @@ curl localhost:8080 \
 Commands:
 gcloud functions list
 gcloud topics list
-
-
 ``
 `` install gcloud ``
 ``gcloud auth application-default login``
 ``gcloud projects list
 
-gcloud functions describe gcp-plain-cloudfunction --region=asia-south2
-gcloud functions delete gcp-plain-cloudfunction --region=asia-south2
-pack build --builder gcr.io/buildpacks/builder:google-22 gcp-plain-cloudfunction --env GOOGLE_RUNTIME_VERSION=21
- docker run -it -ePORT=8080 -p8080:8080 gcp-plain-cloudfunction
-
-pack build --builder=gcr.io/buildpacks/builder pubsub-function
-docker run -it -ePORT=8080 -p8080:8080 pubsub-function
-
-gcloud builds submit --pack image=asia-south2-docker.pkg.dev/codewithb-453208/bp-repos/pubsub-function
-
-or using [cloudbuild.yaml](cloudbuild.yaml)
-gcloud builds submit .
-
-gcloud artifacts docker images list asia-south2-docker.pkg.dev/codewithb-453208/bp-repos
-
-gcloud run deploy my-pubsub-service --image asia-south2-docker.pkg.dev/codewithb-453208/bp-repos/pubsub-function --function com.brij.PubSubFunction 
 
 
 
@@ -152,27 +133,10 @@ gcloud run deploy my-pubsub-service --image asia-south2-docker.pkg.dev/codewithb
 
 
 
-gcloud run deploy cloud-runfunctiondemo-https \
---source . \
---function com.brij.CloudFunctionDemo \
---base-image google-22/java21 \
---region asia-south2 \
---allow-unauthenticated
 
 
-gcloud run deploy cloud-runfunctiondemo-fromzip-https \
---source build/libs/gcp-plain-cloudfunction-1.0-SNAPSHOT-all.jar.zip \
---function com.brij.CloudStorageFunction \
---base-image google-22/java21 \
---region asia-south2 \
---allow-unauthenticated
 
-gcloud run deploy cloud-runfunctiondemo-fromzip-cs \
---source . \
---function com.brij.CloudStorageFunction \
---base-image google-22/java21 \
---region asia-south2 \
---allow-unauthenticated
+
 
 
 ```
